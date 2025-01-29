@@ -1,5 +1,7 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
-  publicPath: 'wybsl-picker'
+  publicPath: './',
+  outputDir: 'dist',
+  assetsDir: 'static'
 })

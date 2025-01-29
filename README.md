@@ -1,4 +1,4 @@
-# vue-wordpress-test-vjv2
+# wybsl-picker
 
 ## Project setup
 ```
