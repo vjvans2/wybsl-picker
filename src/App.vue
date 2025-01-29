@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <h1>Birthdate Checker</h1>
-    <!-- Gender Radio Buttons -->
     <fieldset style="max-width:300px">
       <legend>Select your gender:</legend>
       <label>
@@ -53,7 +52,6 @@ export default {
       const today = new Date();
       let age = today.getFullYear() - birthday.getFullYear();
 
-      // Adjust playing age if birthday is after April (month index starts at 0)
       if (birthday.getMonth() + 1 > 4) {
         age -= 1;
       }
@@ -62,7 +60,6 @@ export default {
     };
 
     const getPrimaryLeague = (playingAge, gender) => {
-      // Add logic to determine the primary league based on playing age
       if (gender === 'male') {
         switch (playingAge) {
           case 4: return 'Tee Ball 1';
