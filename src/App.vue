@@ -49,10 +49,12 @@ export default {
     });
 
     const calculatePlayingAge = (birthday) => {
+      const estBirthday = new Date(birthday.getTime() + 5 * 3600 * 1000); 
       const today = new Date();
-      let age = today.getFullYear() - birthday.getFullYear();
+      let age = today.getFullYear() - estBirthday.getFullYear();
+      const month = estBirthday.getMonth() + 1;
 
-      if (birthday.getMonth() + 1 > 4) {
+      if (month > 4) {
         age -= 1;
       }
 
@@ -105,13 +107,9 @@ export default {
         switch (playingAge) {
           case 5: return 'Tee Ball 2 (if played Tee Ball 1 prior)';
           case 6: return 'Coach Pitch Baseball (8U) (with successful tryout)';
-          case 7: return 'Green Hat Kid Pitch Baseball (10U) (with successful tryout)';
           case 8: return 'Green Hat Kid Pitch Baseball (10U) (with successful tryout)';
-          case 9: return 'Red Hat Kid Pitch Baseball (12U) (with successful tryout)';
           case 10: return 'Red Hat Kid Pitch Baseball (12U) (with successful tryout)';
-          case 11: return 'Blue Hat Kid Pitch Baseball (14U) (with successful tryout)';
           case 12: return 'Blue Hat Kid Pitch Baseball (14U) (with successful tryout)';
-          case 13: return 'Black Hat Kid Pitch Baseball (18U) (with successful tryout)';
           case 14: return 'Black Hat Kid Pitch Baseball (18U) (with successful tryout)';
           default: return ''
         }
@@ -119,9 +117,7 @@ export default {
         switch (playingAge) {
           case 5: return 'Tee Ball 2 (if played Tee Ball 1 prior)';
           case 6: return 'Coach Pitch Softball (8U) (with successful tryout)';
-          case 7: return 'Green Hat Kid Pitch Softball (10U) (with successful tryout)';
           case 8: return 'Green Hat Kid Pitch Softball (10U) (with successful tryout)';
-          case 9: return 'Red Hat Kid Pitch Softball (12U) (with successful tryout)';
           case 10: return 'Red Hat Kid Pitch Softball (12U) (with successful tryout)';
           case 11: return 'Blue Hat Kid Pitch Softball (17U) (with successful tryout)';
           case 12: return 'Blue Hat Kid Pitch Softball (17U) (with successful tryout)';
