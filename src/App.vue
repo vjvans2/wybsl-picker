@@ -13,21 +13,14 @@
       </label>
     </fieldset>
 <br>
-    <form id="birthdateForm" @submit.prevent="checkBirthdate">
-      <label for="birthdate">Enter the players birthdate: </label><br>
-      <input type="date" v-model="birthdate" required :max="maxDate" :min="minDate"/>&nbsp;&nbsp;
-      <button type="submit">Submit</button>
-    </form>
-    <hr v-if="playingAgeResult">
-    <div v-if="playingAgeResult" class="playingAgeResult">
-      {{ playingAgeResult }}
+
+    <!-- put gender dependent checkboxes for leagues here -->
+
+    <hr v-if="resultText">
+    <div v-if="resultText" class="resultText">
+      {{ resultText }}
     </div>
-    <div v-if="playingAgePrimary" class="playingAgeResult">
-      <span>Primary Recommended {{ game }} League -- {{ playingAgePrimary }}</span>
-    </div>
-    <div v-if="playingAgeSecondary" class="playingAgeResult">
-      <span>Secondary Recommended {{ game }} League -- {{ playingAgeSecondary }}</span>
-    </div>
+    
   </div>
 </template>
 
@@ -36,48 +29,27 @@ import { ref, computed, watch } from "vue";
 
 export default {
   setup() {
-    const birthdate = ref("");
     const gender = ref("");
-    const playingAgeResult = ref("");
-    const playingAgePrimary = ref("");
-    const playingAgeSecondary = ref("");
+    const pick = ref("");
+    const resultText = ref("");
 
-    watch(gender, () => {
-      playingAgeResult.value = "";
-      playingAgePrimary.value = "";
-      playingAgeSecondary.value = "";
+    watch(pick, () => {
+      resultText.value = "";
     });
 
-    const calculatePlayingAge = (birthday) => {
-      const estBirthday = new Date(birthday.getTime() + 5 * 3600 * 1000); 
-      const today = new Date();
-      let age = today.getFullYear() - estBirthday.getFullYear();
-      const month = estBirthday.getMonth() + 1;
+    watch(gender, () => {
+      pick.value = "";
+      resultText.value = "";
+    })
 
-      if (month > 4) {
-        age -= 1;
-      }
-
-      return age;
-    };
-
-    const getPrimaryLeague = (playingAge, gender) => {
+    const getLeagueDowText = (pick, gender) => {
       if (gender === 'male') {
-        switch (playingAge) {
+        switch (pick) {
           case 4: return 'Tee Ball 1';
           case 5: return 'Tee Ball 1';
           case 6: return 'Tee Ball 2';
           case 7: return 'Coach Pitch Baseball (8U)';
           case 8: return 'Coach Pitch Baseball (8U)';
-          case 9: return 'Green Hat Kid Pitch Baseball (10U) ';
-          case 10: return 'Green Hat Kid Pitch Baseball (10U) ';
-          case 11: return 'Red Hat Kid Pitch Baseball (12U) ';
-          case 12: return 'Red Hat Kid Pitch Baseball (12U) ';
-          case 13: return 'Blue Hat Kid Pitch Baseball (14U) ';
-          case 14: return 'Blue Hat Kid Pitch Baseball (14U) ';
-          case 15: return 'Black Hat Kid Pitch Baseball (18U) ';
-          case 16: return 'Black Hat Kid Pitch Baseball (18U) ';
-          case 17: return 'Black Hat Kid Pitch Baseball (18U) ';
           default: return ''
         }
       } else {
@@ -87,87 +59,29 @@ export default {
           case 6: return 'Tee Ball 2';
           case 7: return 'Coach Pitch Softball (8U)';
           case 8: return 'Coach Pitch Softball (8U)';
-          case 9: return 'Green Hat Kid Pitch Softball (10U) ';
-          case 10: return 'Green Hat Kid Pitch Softball (10U) ';
-          case 11: return 'Red Hat Kid Pitch Softball (12U) ';
-          case 12: return 'Red Hat Kid Pitch Softball (12U) ';
-          case 13: return 'Blue Hat Kid Pitch Softball (17U) ';
-          case 14: return 'Blue Hat Kid Pitch Softball (17U) ';
-          case 15: return 'Blue Hat Kid Pitch Softball (17U) ';
-          case 16: return 'Blue Hat Kid Pitch Softball (17U) ';
-          case 17: return 'Blue Hat Kid Pitch Softball (17U) ';
           default: return ''
         }
       }
 
-    };
-
-    const getSecondaryLeague = (playingAge, gender) => {
-      if (gender === 'male') {
-        switch (playingAge) {
-          case 5: return 'Tee Ball 2 (if played Tee Ball 1 prior)';
-          case 6: return 'Coach Pitch Baseball (8U) (with successful tryout)';
-          case 8: return 'Green Hat Kid Pitch Baseball (10U) (with successful tryout)';
-          case 10: return 'Red Hat Kid Pitch Baseball (12U) (with successful tryout)';
-          case 12: return 'Blue Hat Kid Pitch Baseball (14U) (with successful tryout)';
-          case 14: return 'Black Hat Kid Pitch Baseball (18U) (with successful tryout)';
-          default: return ''
-        }
-      } else {
-        switch (playingAge) {
-          case 5: return 'Tee Ball 2 (if played Tee Ball 1 prior)';
-          case 6: return 'Coach Pitch Softball (8U) (with successful tryout)';
-          case 8: return 'Green Hat Kid Pitch Softball (10U) (with successful tryout)';
-          case 10: return 'Red Hat Kid Pitch Softball (12U) (with successful tryout)';
-          case 11: return 'Blue Hat Kid Pitch Softball (17U) (with successful tryout)';
-          case 12: return 'Blue Hat Kid Pitch Softball (17U) (with successful tryout)';
-          default: return ''
-        }
-      }
     };
 
     const game = computed(() => {
       return gender.value === 'male' ? 'Baseball' : 'Softball';
     });
 
-    const maxDate = computed(() => {
-      const today = new Date();
-      return `${today.getFullYear() - 3}-12-31`;
-    });
-
-    const minDate = computed(() => {
-      return "2000-01-01";
-    });
-
-    const checkBirthdate = () => {
-      if (!birthdate.value) {
-        playingAgeResult.value = "Please enter a valid date.";
-        return;
-      }
-
+    const getDow = () => {
       if (!gender.value){
         playingAgeResult.value = "Please select a gender."
         return;
       }
 
-      const birthday = new Date(birthdate.value);
-      if (isNaN(birthday)) {
-        playingAgeResult.value = "Invalid date format.";
-        return;
-      }
-
-      const playingAge = calculatePlayingAge(birthday);
-      playingAgeResult.value = `Your playing age is ${playingAge}`;
-      playingAgePrimary.value = getPrimaryLeague(playingAge, gender.value);
-      playingAgeSecondary.value = getSecondaryLeague(playingAge, gender.value);
+      resultText.value = getLeagueDowText(pick.value, gender.value);
     };
 
     return {
-      birthdate, gender,
-      playingAgeResult,
-      playingAgePrimary,
-      playingAgeSecondary,
-      checkBirthdate, game, maxDate, minDate
+      gender,
+      pick,
+      resultText
     };
   },
 };
