@@ -1,6 +1,16 @@
 <template>
   <div id="app">
     <h1>Birthdate Checker</h1>
+    <fieldset style="max-width: 300px">
+      <legend>
+        Select the season:
+      </legend>
+      <label>
+        <input type="checkbox" v-model="isFallBall" />
+        Is Fall Ball?
+      </label>
+    </fieldset>
+    <br>
     <fieldset style="max-width:300px">
       <legend>Select your gender:</legend>
       <label>
@@ -22,6 +32,9 @@
     <div v-if="playingAgeResult" class="playingAgeResult">
       {{ playingAgeResult }}
     </div>
+    <div v-if="seasonResult" class="playingAgeResult">
+      {{ seasonResult }}
+    </div>
     <div v-if="playingAgePrimary" class="playingAgeResult">
       <span>Primary Recommended {{ game }} League -- {{ playingAgePrimary }}</span>
     </div>
@@ -38,12 +51,15 @@ export default {
   setup() {
     const birthdate = ref("");
     const gender = ref("");
+    const isFallBall = ref(false);
     const playingAgeResult = ref("");
+    const seasonResult = ref("");
     const playingAgePrimary = ref("");
     const playingAgeSecondary = ref("");
 
     watch(gender, () => {
       playingAgeResult.value = "";
+      seasonResult.value = "";
       playingAgePrimary.value = "";
       playingAgeSecondary.value = "";
     });
@@ -61,7 +77,13 @@ export default {
       return age;
     };
 
-    const getPrimaryLeague = (playingAge, gender) => {
+    const getPrimaryLeague = (playingAge, gender, fall) => {
+      return fall ? 
+        primaryFallLeagues(playingAge, gender) : 
+        primarySpringLeagues(playingAge, gender);
+    };
+
+    const primarySpringLeagues = (playingAge, gender) => {
       if (gender === 'male') {
         switch (playingAge) {
           case 4: return 'Tee Ball 1';
@@ -99,10 +121,54 @@ export default {
           default: return ''
         }
       }
+    }
 
+    const primaryFallLeagues = (playingAge, gender) => {
+      if (gender === 'male') {
+        switch (playingAge) {
+          case 4: return 'Tee Ball';
+          case 5: return 'Tee Ball';
+          case 6: return 'Coach Pitch Baseball (7U)';
+          case 7: return 'Coach Pitch Baseball (7U)';
+          case 8: return 'Green Hat Kid Pitch Baseball (9U) ';
+          case 9: return 'Green Hat Kid Pitch Baseball (9U) ';
+          case 10: return 'Red Hat Kid Pitch Baseball (11U) ';
+          case 11: return 'Red Hat Kid Pitch Baseball (11U) ';
+          case 12: return 'Blue Hat Kid Pitch Baseball (13U) ';
+          case 13: return 'Blue Hat Kid Pitch Baseball (13U) ';
+          case 14: return 'Black Hat Kid Pitch Baseball (17U) ';
+          case 15: return 'Black Hat Kid Pitch Baseball (17U) ';
+          case 16: return 'Black Hat Kid Pitch Baseball (17U) ';
+          case 17: return 'Black Hat Kid Pitch Baseball (17U) ';
+          default: return ''
+        }
+      } else {
+        switch (playingAge) {
+          case 4: return 'Tee Ball';
+          case 5: return 'Tee Ball';
+          case 6: return 'Coach Pitch Softball (7U)';
+          case 7: return 'Coach Pitch Softball (7U)';
+          case 8: return 'Green Hat Kid Pitch Softball (9U) ';
+          case 9: return 'Green Hat Kid Pitch Softball (9U) ';
+          case 10: return 'Red Hat Kid Pitch Softball (11U) ';
+          case 11: return 'Red Hat Kid Pitch Softball (11U) ';
+          case 12: return 'Blue Hat Kid Pitch Softball (16U) ';
+          case 13: return 'Blue Hat Kid Pitch Softball (16U) ';
+          case 14: return 'Blue Hat Kid Pitch Softball (16U) ';
+          case 15: return 'Blue Hat Kid Pitch Softball (16U) ';
+          case 16: return 'Blue Hat Kid Pitch Softball (16U) ';
+          default: return ''
+        }
+      }
+    }
+
+    const getSecondaryLeague = (playingAge, gender, fall) => {
+      return fall ? 
+        secondaryFallLeagues(playingAge, gender) : 
+        secondarySpringLeagues(playingAge, gender);
     };
 
-    const getSecondaryLeague = (playingAge, gender) => {
+    const secondarySpringLeagues = (playingAge, gender) => {
       if (gender === 'male') {
         switch (playingAge) {
           case 5: return 'Tee Ball 2 (if played Tee Ball 1 prior)';
@@ -123,8 +189,16 @@ export default {
           case 12: return 'Blue Hat Kid Pitch Softball (17U) (with successful tryout)';
           default: return ''
         }
-      }
-    };
+    }}
+
+    const secondaryFallLeagues = (playingAge) => {
+      switch (playingAge) {
+          case 5: return `Coach Pitch ${game.value} (7U) (with successful tryout)`;
+          case 7: return `Green Hat Kid Pitch ${game.value} (9U) (with successful tryout)`;
+          case 9: return `Red Hat Kid Pitch ${game.value} (11U) (with successful tryout)`;
+          case 11: return `Blue Hat Kid Pitch ${game.value} ${game.value === 'Baseball' ? "13U" : "16U"}) (with successful tryout)`;
+          default: return '';
+    }};
 
     const game = computed(() => {
       return gender.value === 'male' ? 'Baseball' : 'Softball';
@@ -156,15 +230,20 @@ export default {
         return;
       }
 
+      console.log("fall", isFallBall.value)
+
       const playingAge = calculatePlayingAge(birthday);
       playingAgeResult.value = `Your playing age is ${playingAge}`;
-      playingAgePrimary.value = getPrimaryLeague(playingAge, gender.value);
-      playingAgeSecondary.value = getSecondaryLeague(playingAge, gender.value);
+      seasonResult.value = `The season is ${isFallBall.value ? 'Fall Ball' : 'Spring Ball'}`;
+      playingAgePrimary.value = getPrimaryLeague(playingAge, gender.value, isFallBall.value);
+      playingAgeSecondary.value = getSecondaryLeague(playingAge, gender.value, isFallBall.value);
     };
 
     return {
       birthdate, gender,
       playingAgeResult,
+      seasonResult,
+      isFallBall,
       playingAgePrimary,
       playingAgeSecondary,
       checkBirthdate, game, maxDate, minDate
