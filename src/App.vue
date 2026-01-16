@@ -100,6 +100,7 @@ export default {
           case 15: return 'Black Hat Kid Pitch Baseball (18U) ';
           case 16: return 'Black Hat Kid Pitch Baseball (18U) ';
           case 17: return 'Black Hat Kid Pitch Baseball (18U) ';
+          case 18: return 'Black Hat Kid Pitch Baseball (18U) ';
           default: return ''
         }
       } else {
@@ -229,8 +230,6 @@ export default {
         playingAgeResult.value = "Invalid date format.";
         return;
       }
-
-      console.log("fall", isFallBall.value)
 
       const playingAge = calculatePlayingAge(birthday);
       playingAgeResult.value = `Your playing age is ${playingAge}`;
